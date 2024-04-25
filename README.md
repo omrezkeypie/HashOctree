@@ -2,6 +2,8 @@
 
 HashOctree is an optimized hash octree that is both memory effiecent and cpu effiecent. 
 
+**Note** The module has no update function for dynamic objects as the updating was slower than just recreating a new octree per frame.
+
 # Performance
 
 **All the benchmarks shown use 1k objects**
