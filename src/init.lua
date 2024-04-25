@@ -2,17 +2,24 @@
 --!native
 
 type Object = {
-	Position : Vector3
+	Position: Vector3
 }
 
-type HashOctree = {
-	MaxDepth : number,
-	Size : number,
-	Nodes : {{Object}},
-	StartPosition : Vector3,
+export type HashOctree = {
+	MaxDepth: number,
+	Size: number,
+	Nodes: {{Object}},
+	StartPosition: Vector3,
 }
 
-local BinaryOperations = require(script.BinaryOperations)
+type Module = {
+	new: (Size: number, MaxDepth: number,StartPosition: Vector3) -> HashOctree,
+	InsertObjects: (HashOctree: HashOctree, Objects: { Object }) -> (),
+	QueryBox: (HashOctree: HashOctree, Position: Vector3, Size: Vector3) -> {Object},
+	QuerySphere: (HashOctree : HashOctree,Position : Vector3,Radius : number) -> {Object},
+	VisualizeOctree: (HashOctree : HashOctree) -> ()
+}
+
 local SuffixToOrder = {
 	Vector3.new(-1,-1,-1),--0
 	Vector3.new(-1,-1,1), --1
@@ -27,17 +34,7 @@ local SuffixToOrder = {
 local Dot = Vector3.new().Dot
 local SubdivideThreshold = 10
 
-local HashOctreeModule = {}
-
-local function MakePart(Position,Name)
-	local Part = Instance.new("Part")
-	Part.Parent = workspace
-	Part.Anchored = true
-	Part.Transparency = 0.5
-	Part.Size = Vector3.new(1,1,1)
-	Part.Name = Name or "Part"
-	Part.Position = Position
-end
+local HashOctreeModule: Module = {} :: Module
 
 local function IsPositionInBox(Position: Vector3, MinBounds : Vector3, MaxBounds : Vector3) : boolean
 	return Position.X >= MinBounds.X and Position.X <= MaxBounds.X
@@ -219,7 +216,7 @@ function HashOctreeModule.QueryBox(HashOctree : HashOctree,Position : Vector3,Si
 	return GottenObjects
 end
 
-function HashOctreeModule.QuerySphere(HashOctree : HashOctree,Position : Vector3,Radius : Vector3) : {Object}
+function HashOctreeModule.QuerySphere(HashOctree : HashOctree,Position : Vector3,Radius : number) : {Object}
 	local ChosenNodes = {1}
 	local Nodes = HashOctree.Nodes
 	local GottenObjects = {}
@@ -284,8 +281,8 @@ function HashOctreeModule.VisualizeOctree(HashOctree : HashOctree)
 
 		MakeVisualisePart(Node.Size,NodePosition,Node[1])
 
-		for i = 1,8 do
-			local HashIndex = BinaryOperations.CombineNumbers(Node[1],i - 1)
+		for i = 0,7 do
+			local HashIndex = Node[1] * 8 + i
 
 			if HashOctree.Nodes[HashIndex] == nil then continue end
 

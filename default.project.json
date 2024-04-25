@@ -1,0 +1,6 @@
+{
+    "name": "HashOctree",
+    "tree": {
+        "$path": "src"
+    }
+}
