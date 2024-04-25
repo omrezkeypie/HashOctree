@@ -4,7 +4,7 @@ HashOctree is an optimized hash octree that is both memory effiecent and cpu eff
 
 # Performance
 
-All the benchmarks shown in the images use 1k objects
+All the benchmarks shown use 1k objects
 
 ![image](https://github.com/omrezkeypie/HashOctree/assets/104690138/857c2655-69d5-43ed-8f1b-017678392ad3)
 ![image](https://github.com/omrezkeypie/HashOctree/assets/104690138/14c25158-0e93-4518-ba29-a04e44554de0)
