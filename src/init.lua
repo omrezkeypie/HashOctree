@@ -132,27 +132,27 @@ function HashOctreeModule.InsertObjects(HashOctree : HashOctree,Objects : {{Posi
 	local NodePosition = HashOctree.StartPosition
 	local ChosenNode = 1
 	local MaxDepth = HashOctree.MaxDepth
-	
+
 	for _,Object in Objects do
-		local Position = Object.Position
+		local ObjectPosition = Object.Position
 
 		while true do
 			local Suffix = 0
 
-			if Position.X > NodePosition.X then
+			if ObjectPosition.X > NodePosition.X then
 				Suffix += 4
 			end
 
-			if Position.Y > NodePosition.Y then
+			if ObjectPosition.Y > NodePosition.Y then
 				Suffix += 2
 			end
 
-			if Position.Z > NodePosition.Z then
+			if ObjectPosition.Z > NodePosition.Z then
 				Suffix += 1
 			end
-						
+
 			local NextNode = ChosenNode * 8 + Suffix
-						
+
 			if HashOctree.Nodes[NextNode] == nil then
 				local ChosenNodeTable = HashOctree.Nodes[ChosenNode]
 
@@ -164,9 +164,9 @@ function HashOctreeModule.InsertObjects(HashOctree : HashOctree,Objects : {{Posi
 
 				break
 			end
-			
+
 			NodePosition = NodePosition + (Size * SuffixToOrder[Suffix + 1])
-			
+
 			Size = Size / 2
 			ChosenNode = NextNode
 			Depth = Depth + 1
@@ -191,7 +191,7 @@ function HashOctreeModule.QueryBox(HashOctree : HashOctree,Position : Vector3,Si
 		local NodeTable = Nodes[Node]
 		local NodePosition,NodeSize = GetNodePositionAndSize(HashOctree,Node)
 		if not DetectBoxOverlap(MinBound,MaxBound,NodePosition - NodeSize,NodePosition + NodeSize) then continue end
-				
+
 		local ShifterNumber = Node * 8
 
 		for HashSuffix = 0,7 do
@@ -221,34 +221,34 @@ function HashOctreeModule.QuerySphere(HashOctree : HashOctree,Position : Vector3
 	local Nodes = HashOctree.Nodes
 	local GottenObjects = {}
 	Radius *= Radius
-	
+
 	while #ChosenNodes > 0 do
 		local Node = table.remove(ChosenNodes)
 		local NodeTable = Nodes[Node]
 		local NodePosition,NodeSize = GetNodePositionAndSize(HashOctree,Node)
-		
+
 		if not DetectBoxAndSphereOverlap(NodePosition - NodeSize,NodePosition + NodeSize,Position,Radius) then continue end
-				
+
 		local ShifterNumber = Node * 8
-				
+
 		for HashSuffix = 0,7 do
 			local NextNode = ShifterNumber + HashSuffix
-			
-			
+
+
 			if Nodes[NextNode] == nil then
 				if #NodeTable > 0 then
 					for _,Object in NodeTable do
 						local SubtractedPositions = Position - Object.Position
-						
+
 						if Dot(SubtractedPositions,SubtractedPositions,SubtractedPositions) <= Radius then 
 							table.insert(GottenObjects,Object)
 						end
 					end
 				end				
-				
+
 				break
 			end
-			
+
 			table.insert(ChosenNodes,NextNode)
 		end
 	end
