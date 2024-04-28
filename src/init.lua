@@ -17,6 +17,7 @@ type Module = {
 	QueryBox: (HashOctree: HashOctree, Position: Vector3, Size: Vector3) -> {Object},
 	QuerySphere: (HashOctree : HashOctree,Position : Vector3,Radius : number) -> {Object},
 	RemoveObject: (HashOctree : HashOctree,Object : Object) -> (),
+	InsertObject: (HashOctree : HashOctree,Object : Object) -> (),
 	VisualizeOctree: (HashOctree : HashOctree) -> ()
 }
 
@@ -126,7 +127,7 @@ end
 
 function HashOctreeModule.InsertObjects(HashOctree : HashOctree,Objects : {Object})
 	local QuarterSize = HashOctree.Size / 4
-	local Size = Vector3.new(QuarterSize,QuarterSize,QuarterSize)
+	local Size = QuarterSize
 	local Depth = 0
 	local NodePosition = Vector3.zero
 	local ChosenNode = 1
@@ -175,6 +176,52 @@ function HashOctreeModule.InsertObjects(HashOctree : HashOctree,Objects : {Objec
 		Depth = 0
 		NodePosition = Vector3.zero
 		ChosenNode = 1
+	end
+end
+
+function HashOctreeModule.InsertObject(HashOctree : HashOctree,Object : Object)
+	local Size = HashOctree.Size / 4
+	local Depth = 0
+	local NodePosition = Vector3.zero
+	local ChosenNode = 1
+	local MaxDepth = HashOctree.MaxDepth
+	
+	local Position = Object.Position
+
+	while true do
+		local Suffix = 0
+
+		if Position.X > NodePosition.X then
+			Suffix += 4
+		end
+
+		if Position.Y > NodePosition.Y then
+			Suffix += 2
+		end
+
+		if Position.Z > NodePosition.Z then
+			Suffix += 1
+		end
+
+		local NextNode = ChosenNode * 8 + Suffix
+
+		if HashOctree.Nodes[NextNode] == nil then
+			local ChosenNodeTable = HashOctree.Nodes[ChosenNode]
+
+			table.insert(ChosenNodeTable,Object)
+
+			if #ChosenNodeTable > SubdivideThreshold and Depth < MaxDepth then
+				ReassignObjects(HashOctree,ChosenNode,NodePosition)
+			end
+
+			break
+		end
+
+		NodePosition = NodePosition + (Size * SuffixToOrder[Suffix + 1])
+
+		Size = Size / 2
+		ChosenNode = NextNode
+		Depth = Depth + 1
 	end
 end
 
