@@ -6,8 +6,9 @@ type Object = {
 }
 
 export type HashOctree = {
-	MaxDepth: number,
+	MaxDepth: number?,
 	Size: number,
+	OffsetPosition : Vector3?,
 	Nodes: {{Object}},
 }
 
@@ -83,7 +84,7 @@ local function GetNodePositionAndSize(HashOctree : HashOctree,Node : number) : (
 		HalfSize = HalfSize / 2
 	end
 
-	return Position,HalfSize * 2
+	return HashOctree.OffsetPosition + Position,HalfSize * 2
 end
 
 local function ReassignObjects(HashOctree : HashOctree,Node : number,NodePosition : Vector3)
@@ -115,10 +116,11 @@ local function ReassignObjects(HashOctree : HashOctree,Node : number,NodePositio
 	table.clear(NodeTable)
 end
 
-function HashOctreeModule.new(Size : number,MaxDepth : number?) : HashOctree
+function HashOctreeModule.new(Size : number,MaxDepth : number?,OffsetPosition : Vector3?) : HashOctree
 	local newHashOctree = {
 		MaxDepth = if MaxDepth then math.clamp(MaxDepth,1,10) else 5,
 		Size = Size,
+		OffsetPosition = if OffsetPosition then OffsetPosition else Vector3.zero,
 		Nodes = {{}},
 	}
 
@@ -129,10 +131,10 @@ function HashOctreeModule.InsertObjects(HashOctree : HashOctree,Objects : {Objec
 	local QuarterSize = HashOctree.Size / 4
 	local Size = QuarterSize
 	local Depth = 0
-	local NodePosition = Vector3.zero
+	local NodePosition = HashOctree.OffsetPosition
 	local ChosenNode = 1
 	local MaxDepth = HashOctree.MaxDepth
-
+	
 	for _,Object in Objects do
 		local Position = Object.Position
 
@@ -174,7 +176,7 @@ function HashOctreeModule.InsertObjects(HashOctree : HashOctree,Objects : {Objec
 
 		Size = QuarterSize
 		Depth = 0
-		NodePosition = Vector3.zero
+		NodePosition = HashOctree.OffsetPosition
 		ChosenNode = 1
 	end
 end
@@ -182,10 +184,9 @@ end
 function HashOctreeModule.InsertObject(HashOctree : HashOctree,Object : Object)
 	local Size = HashOctree.Size / 4
 	local Depth = 0
-	local NodePosition = Vector3.zero
+	local NodePosition = HashOctree.OffsetPosition
 	local ChosenNode = 1
 	local MaxDepth = HashOctree.MaxDepth
-	
 	local Position = Object.Position
 
 	while true do
@@ -226,12 +227,11 @@ function HashOctreeModule.InsertObject(HashOctree : HashOctree,Object : Object)
 end
 
 function HashOctreeModule.RemoveObject(HashOctree : HashOctree,Object : Object)
-	local QuarterSize = HashOctree.Size / 4
-	local Size = Vector3.new(QuarterSize,QuarterSize,QuarterSize)
+	local Size = HashOctree.Size / 4
 	local ChosenNode = 1
-	local NodePosition = Vector3.zero
+	local NodePosition = HashOctree.OffsetPosition
 	local Position = Object.Position
-	
+
 	while true do
 		local Suffix = 0
 
@@ -248,14 +248,14 @@ function HashOctreeModule.RemoveObject(HashOctree : HashOctree,Object : Object)
 		end
 
 		local NextNode = ChosenNode * 8 + Suffix
-		
+
 		if HashOctree.Nodes[NextNode] == nil then
 			local LeafNode = HashOctree.Nodes[ChosenNode]
 			table.remove(LeafNode,table.find(LeafNode,Object))
-			
+
 			break
 		end
-		
+
 		NodePosition = NodePosition + (Size * SuffixToOrder[Suffix + 1])
 		Size = Size / 2
 		ChosenNode = NextNode
@@ -268,7 +268,7 @@ function HashOctreeModule.QueryBox(HashOctree : HashOctree,Position : Vector3,Si
 	local ChosenNodes = {1}
 	local Nodes = HashOctree.Nodes
 	local GottenObjects = {}
-	
+
 	while #ChosenNodes > 0 do
 		local Node = table.remove(ChosenNodes)
 		local NodeTable = Nodes[Node]
