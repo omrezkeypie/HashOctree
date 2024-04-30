@@ -20,17 +20,30 @@ Octree querying.
 HashOctreeModule.new(Size : number, MaxDepth : number?) : HashOctree
 ```
 
-Takes in a number for the size of the octree and an optional max subdivision depth (The top limit is 10 depth) and returns the hash octree.
+Takes in a number for the size of the octree and an optional max subdivision depth (The top limit is 10 depth) and returns the octree.
 
 ```lua
 HashOctreeModule.InsertObjects(HashOctree : HashOctree,Objects : {Object})
 ```
 
-Takes in a table of objects (anything with a Position value) and inserts them into the hash octree.
+Takes in a table of objects (anything with a Position value) and inserts them into the octree.
+
+```lua
+HashOctreeModule.RemoveObject(HashOctree : HashOctree,Object : Object)
+```
+
+Takes in an object and removes it from the octree.
+
+```lua
+HashOctreeModule.InsertObject(HashOctree : HashOctree,Object : Object)
+```
+
+Takes in an object and inserts it into the octree.
 
 ```lua
 HashOctreeModule.QueryBox(HashOctree : HashOctree,Position : Vector3,Size : Vector3) : {Object}
 ```
+
 Takes in the box's position and size and returns all the objects in the octree inside said box.
 
 ```lua
