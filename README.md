@@ -51,3 +51,9 @@ HashOctreeModule.QuerySphere(HashOctree : HashOctree,Position : Vector3,Radius :
 ```
 
 Takes in the sphere's position and radius and returns all the objects in the octree inside said sphere.
+
+```lua
+HashOctreeModule.VisualizeOctree(HashOctree : HashOctree)
+```
+
+Takes in an octree and visualizes it.
