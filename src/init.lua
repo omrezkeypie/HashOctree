@@ -134,7 +134,7 @@ function HashOctreeModule.InsertObjects(HashOctree : HashOctree,Objects : {Objec
 	local NodePosition = HashOctree.OffsetPosition
 	local ChosenNode = 1
 	local MaxDepth = HashOctree.MaxDepth
-	
+
 	for _,Object in Objects do
 		local Position = Object.Position
 
