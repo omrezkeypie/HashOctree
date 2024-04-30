@@ -17,10 +17,10 @@ Octree querying.
 # API
 
 ```lua
-HashOctreeModule.new(Size : number, MaxDepth : number?) : HashOctree
+HashOctreeModule.new(Size : number, MaxDepth : number?,OffsetPosition : Vector3?) : HashOctree
 ```
 
-Takes in a number for the size of the octree and an optional max subdivision depth (The top limit is 10 depth) and returns the octree.
+Takes in a number for the size of the octree and an optional max subdivision depth (The top limit is 10 depth) and an optional OffsetPosition and returns the octree.
 
 ```lua
 HashOctreeModule.InsertObjects(HashOctree : HashOctree,Objects : {Object})
