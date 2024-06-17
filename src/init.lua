@@ -13,7 +13,7 @@ export type HashOctree = {
 }
 
 type Module = {
-	new: (Size: number, MaxDepth: number?,OffsetPosition : Vector3) -> HashOctree,
+	new: (Size: number, MaxDepth: number?,OffsetPosition : Vector3?) -> HashOctree,
 	InsertObjects: (HashOctree: HashOctree, Objects: { Object }) -> (),
 	QueryBox: (HashOctree: HashOctree, Position: Vector3, Size: Vector3) -> {Object},
 	QuerySphere: (HashOctree : HashOctree,Position : Vector3,Radius : number) -> {Object},
