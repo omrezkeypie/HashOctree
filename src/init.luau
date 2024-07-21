@@ -34,7 +34,7 @@ local SuffixToOrder = {
 }
 
 local Dot = Vector3.new().Dot
-local SubdivideThreshold = 10
+local SubdivideThreshold = 30
 
 local HashOctreeModule: Module = {} :: Module
 
