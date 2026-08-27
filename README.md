@@ -4,6 +4,9 @@ BinaryOctree is an optimized octree that is both memory effiecent and cpu effiec
 
 **Note** The module has no update function for dynamic objects as the updating was slower than just recreating a new octree per frame.
 
+Memory optimizations and data structure implementations heavily inspired by the following paper:
+https://thomas.lewiner.org/pdfs/octree_cgf.pdf
+
 # Performance
 
 **All the benchmarks shown use 1000 objects**
